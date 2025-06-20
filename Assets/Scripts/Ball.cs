@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -21,8 +22,16 @@ public class Ball : MonoBehaviour
     private int bounceCount = 0;
     private float currentMaxSpeed;
 
+    public GameManager manager;
+
+    private int score1;
+    private int score2;
+
+    private int countupdate = 0;
+
     void Start()
     {
+        score1 = 0; score2 = 0;
         rb = GetComponent<Rigidbody2D>();
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         currentMaxSpeed = startSpeed + maxSpeedIncrease;
@@ -35,7 +44,26 @@ public class Ball : MonoBehaviour
 
         if (transform.position.x < -10f || transform.position.x > 10f)
         {
-            StartCoroutine(RespawnWithDelay());
+            if (transform.position.x < -10f)
+            {
+                if(countupdate == 0)
+                {
+                    score2++;
+                    manager.UpdateScore(score1, score2);
+                    StartCoroutine(RespawnWithDelay());
+                    countupdate++;
+                }
+            }
+            else if(transform.position.x > 10f)
+            {
+                if (countupdate == 0)
+                {
+                    score1++;
+                    manager.UpdateScore(score1, score2);
+                    StartCoroutine(RespawnWithDelay());
+                    countupdate++;
+                }
+            }
         }
 
         if (Mathf.Abs(rb.linearVelocity.y) < startSpeed * minVerticalFactor)
@@ -125,5 +153,6 @@ public class Ball : MonoBehaviour
     {
         yield return new WaitForSeconds(respawnDelay);
         ResetBall();
+        countupdate = 0;
     }
 }
