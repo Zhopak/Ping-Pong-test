@@ -15,4 +15,11 @@ public class GameManager : MonoBehaviour
     {
         Score.text = $"{score1player} : {score2player}";
     }
+    public void Exit()
+    {
+        Application.Quit();
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    }
 }
